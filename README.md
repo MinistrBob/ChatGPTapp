@@ -1,2 +1,4 @@
 # ChatGPTapp
-Пробовать работать с ChatGPT
+Генерация описаний для запчастей с помощью ChatGPT.
+
+pip install openai
