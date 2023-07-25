@@ -46,7 +46,7 @@ if __name__ == '__main__':
             first_line = f.readline().strip('\n')  # Первая строка
             previous_line = first_line
             result = query2(first_line)
-            print(f"{time.time() - start}сек. | {first_line}")
+            print(f"{str(i).zfill(4)} | {time.time() - start}сек. | {first_line}")
             worksheet.write(i, 0, first_line)
             worksheet.write(i, 1, result)
             i += 1
@@ -60,11 +60,11 @@ if __name__ == '__main__':
                 worksheet.write(i, 0, line)
                 worksheet.write(i, 1, result)
                 i += 1
-                print(f"{i.zfill(4)} | {time.time() - start} сек. | {line}")
+                print(f"{str(i).zfill(4)} | {time.time() - start} сек. | {line}")
         workbook.close()
     except Exception as e:
         err_text = f"Error: {e}"
-        err_line = f"{i.zfill(4)} | {time.time() - start} сек. | {line}"
+        err_line = f"{str(i).zfill(4)} | {time.time() - start} сек. | {line}"
         err_stack = traceback.format_exc()
         print(err_text)
         print(err_line)
@@ -72,7 +72,6 @@ if __name__ == '__main__':
         telegram_notification(err_text)
         telegram_notification(err_line)
         telegram_notification(err_stack)
-    finally:
         workbook.close()
     end = time.time() - start  # собственно время работы программы
     message_text = f"Время работы программы: {end} сек. | Всего строк  {i} | Всего уникальных строк {u}"
