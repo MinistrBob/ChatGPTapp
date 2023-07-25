@@ -13,6 +13,7 @@ if settings.DEBUG:
 openai.api_key = settings.openai_api_key
 openai.organization = settings.openai_organization
 
+
 def query2(prompt):
     prompt = "составь описание автозапчасти примерно на 1000 символов без наименования:" + "\n" + prompt
     chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo-16k-0613",
@@ -34,10 +35,10 @@ def telegram_notification(message):
 
 
 if __name__ == '__main__':
-    start = time.time()  ## точка отсчета времени
+    start = time.time()  # Текущее время
+    # Обработка списка товаров из текстового файла
+    workbook = xlsxwriter.Workbook(settings.excel_file)
     try:
-        # Обработка списка товаров из текстового файла
-        workbook = xlsxwriter.Workbook(settings.excel_file)
         worksheet = workbook.add_worksheet('Список')
         with open(settings.text_file, "r", encoding="utf-8") as f:
             i = 1  # Индекс текущей строки
