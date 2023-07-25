@@ -10,7 +10,6 @@ settings = SETTINGS.get_settings()
 if settings.DEBUG:
     print(f"settings={settings}")
 
-# openai.api_key = "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"
 openai.api_key = settings.openai_api_key
 openai.organization = settings.openai_organization
 
