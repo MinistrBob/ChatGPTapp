@@ -189,8 +189,9 @@ def mass_query_03():
                 telegram_notification(f"❌ Количество ошибок больше 3")
                 break
             i -= 1
-            time.sleep(60 * error_count)  # Пауза в случае ошибки.
             error_count += 1
+            print(f"Пауза {60 * error_count} сек.")
+            time.sleep(60 * error_count)  # Пауза в случае ошибки.
         i += 1
 
     # Запись результата в текстовый файл (на всякий случай)
