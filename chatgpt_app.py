@@ -190,7 +190,7 @@ def mass_query_03():
                 break
             i -= 1
             error_count += 1
-            print(f"Пауза {60 * error_count} сек.")
+            print(f"\n\nПауза {60 * error_count} сек.\n\n")
             time.sleep(60 * error_count)  # Пауза в случае ошибки.
         i += 1
 
