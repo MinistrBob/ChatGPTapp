@@ -160,6 +160,72 @@ def mass_query_02():
     telegram_notification(f"✅ {message_text}")
 
 
+def mass_query_03():
+    """
+    Цикл по текстовому файлу БЕЗ фильтрацией дублей. Т.е. для каждой строки формируется своё описание.
+    Если возникает ошибка, то скрипт становится на паузу и затем повторяет обработку этой строки ещё раз.
+    :return:
+    """
+    start = time.time()  # Текущее время
+    prefix = "составь описание автозапчасти примерно на 1000 символов без наименования:\n"
+    # Read data from text file settings.journal_text_file to list
+    with open(settings.text_file, "r", encoding="utf-8") as f:
+        list_data = [line.rstrip() for line in f]
+    # print(list_data[0])
+
+    # Обрабатываем все строки и заносим результат в память в виде списка sets - list[(), (), ...]
+    i = 0  # Индекс текущей строки
+    result_list = []
+    error_count = 1
+    while i < len(list_data):
+        try:
+            result = query2(prefix + list_data[i])
+            result_list.append((list_data[i], result))
+            print(f"{str(i).zfill(4)} | {time.time() - start} сек. | {list_data[i]}")
+            error_count = 1
+        except:
+            print(f"Error: {e}\n{traceback.format_exc()}")
+            if error_count > 3:
+                telegram_notification(f"❌ Количество ошибок больше 3")
+                break
+            i -= 1
+            time.sleep(60 * error_count)  # Пауза в случае ошибки.
+            error_count += 1
+        i += 1
+
+    # Запись результата в текстовый файл (на всякий случай)
+    try:
+        with open(settings.journal_text_file, "w") as output:
+            for line in result_list:
+                output.write(f"{line[0]}\t{line[1]}\n")
+    except:
+        output.close()
+        err_text = f"Error: {e}\n{traceback.format_exc()}"
+        print(err_text)
+        telegram_notification(f"❌ {err_text}")
+        exit(1)
+
+    # Запись результата в Excel
+    workbook = xlsxwriter.Workbook(settings.excel_file)
+    try:
+        worksheet = workbook.add_worksheet('Список')
+        for idx, line in enumerate(result_list):
+            worksheet.write(idx, 0, line[0])
+            worksheet.write(idx, 1, line[1])
+        workbook.close()
+    except Exception as e:
+        workbook.close()
+        err_text = f"Error: {e}\n{traceback.format_exc()}"
+        print(err_text)
+        telegram_notification(f"❌ {err_text}")
+        exit(1)
+
+    end = time.time() - start  # собственно время работы программы
+    message_text = f"Время работы программы: {end} сек. | Всего строк  {i}"
+    print(message_text)
+    telegram_notification(f"✅ {message_text}")
+
+
 def test_query():
     """
     Тестирование запроса.
@@ -174,4 +240,5 @@ def test_query():
 if __name__ == '__main__':
     # test_query()
     # mass_query_01()
-    mass_query_02()
+    # mass_query_02()
+    mass_query_03()
