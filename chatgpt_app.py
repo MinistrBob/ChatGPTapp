@@ -183,7 +183,7 @@ def mass_query_03():
             result_list.append((list_data[i], result))
             print(f"{str(i).zfill(4)} | {time.time() - start} сек. | {list_data[i]}")
             error_count = 1
-        except:
+        except Exception as e:
             print(f"Error: {e}\n{traceback.format_exc()}")
             if error_count > 3:
                 telegram_notification(f"❌ Количество ошибок больше 3")
@@ -198,7 +198,7 @@ def mass_query_03():
         with open(settings.journal_text_file, "w") as output:
             for line in result_list:
                 output.write(f"{line[0]}\t{line[1]}\n")
-    except:
+    except Exception as e:
         output.close()
         err_text = f"Error: {e}\n{traceback.format_exc()}"
         print(err_text)
