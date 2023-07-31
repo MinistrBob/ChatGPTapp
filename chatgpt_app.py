@@ -3,6 +3,7 @@ import SETTINGS
 import xlsxwriter
 import time
 import traceback
+import asyncio
 from urllib import request, parse
 
 # Настройки программы
@@ -12,6 +13,11 @@ if settings.DEBUG:
 
 openai.api_key = settings.openai_api_key
 openai.organization = settings.openai_organization
+
+
+async def query3(prompt, model="gpt-3.5-turbo"):
+    chat_completion = await openai.ChatCompletion.acreate(model=model, messages=[{"role": "user", "content": prompt}])
+    return chat_completion.choices[0].message.content.rstrip('\n')
 
 
 def query2(prompt, model="gpt-3.5-turbo"):
@@ -160,7 +166,7 @@ def mass_query_02():
     telegram_notification(f"✅ {message_text}")
 
 
-def mass_query_03():
+async def mass_query_03():
     """
     Цикл по текстовому файлу БЕЗ фильтрацией дублей. Т.е. для каждой строки формируется своё описание.
     Если возникает ошибка, то скрипт становится на паузу и затем повторяет обработку этой строки ещё раз.
@@ -179,7 +185,8 @@ def mass_query_03():
     error_count = 1
     while i < len(list_data):
         try:
-            result = query2(prefix + list_data[i])
+            # result = query2(prefix + list_data[i])
+            result = await query3(prefix + list_data[i])
             result_list.append((list_data[i], result))
             print(f"{str(i).zfill(4)} | {time.time() - start} сек. | {list_data[i]}")
             error_count = 1
@@ -242,4 +249,5 @@ if __name__ == '__main__':
     # test_query()
     # mass_query_01()
     # mass_query_02()
-    mass_query_03()
+    # mass_query_03()
+    asyncio.run(mass_query_03())
