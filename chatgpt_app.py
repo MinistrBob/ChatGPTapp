@@ -15,6 +15,11 @@ openai.api_key = settings.openai_api_key
 openai.organization = settings.openai_organization
 
 
+def query_gpt(prompt, model="gpt-3.5-turbo"):
+    chat_completion = openai.ChatCompletion.create(model=model, messages=[{"role": "user", "content": prompt}])
+    return chat_completion.choices[0].message.content.rstrip('\n')
+
+
 async def query3(prompt, model="gpt-3.5-turbo"):
     chat_completion = await openai.ChatCompletion.acreate(model=model, messages=[{"role": "user", "content": prompt}])
     return chat_completion.choices[0].message.content.rstrip('\n')
@@ -250,4 +255,9 @@ if __name__ == '__main__':
     # mass_query_01()
     # mass_query_02()
     # mass_query_03()
-    asyncio.run(mass_query_03())
+    # asyncio.run(mass_query_03())
+
+    # Одиночный запрос
+    question = ""
+    answer = query_gpt(question, model="gpt-3.5-turbo")
+    print(answer)
